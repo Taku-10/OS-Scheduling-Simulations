@@ -32,28 +32,13 @@ public class Barman extends Thread
 		{
 			this.orderQueue = new PriorityBlockingQueue<>(11, Comparator.comparingInt(DrinkOrder::getExecutionTime));
 		} 
-		// Round Robin
-		else if (schedAlg == 2) 
-		{
-			this.roundRobinList = new LinkedList<>();
-			this.orderQueue = new LinkedBlockingQueue<>();
-		}
-
-	    this.startSignal=startSignal;
+		
+	    this.startSignal = startSignal;
 	}
 	
 	public void placeDrinkOrder(DrinkOrder order) throws InterruptedException 
 	{
-		if (schedAlg == 2 ) 
-		{
-			synchronized (roundRobinList)
-			{
-				roundRobinList.add(order);
-            }
-		} else
-		{
-			orderQueue.put(order);
-		}
+		orderQueue.put(order);
     }
 	
 	public void run()
@@ -65,8 +50,8 @@ public class Barman extends Thread
 			startSignal.await(); //check latch - don't start until told to do so
 
 	        executeStandard(); // FCFS = 0, SJF = 1, RR = 2
-				
-		} catch (InterruptedException e1) 
+		} 
+		catch (InterruptedException e1) 
 
 		{
 			System.out.println("---Barman is packing up ");

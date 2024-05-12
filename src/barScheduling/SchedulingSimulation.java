@@ -12,13 +12,12 @@ import java.util.concurrent.CountDownLatch;
 public class SchedulingSimulation {
 	static int noPatrons=100; //number of customers - default value if not provided on command line
 	static int sched=0; //which scheduling algorithm, 0= FCFS
-			
 	static CountDownLatch startSignal;
-
-	
 	static Patron[] patrons; // array for customer threads
 	static Barman Andre;
 	static FileWriter writer;
+	static long simulationStartTime;
+    static long simulationEndTime;
 
 	public  void writeToFile(String data) throws IOException {
 	    synchronized (writer) {
@@ -28,8 +27,6 @@ public class SchedulingSimulation {
 
 	public static void main(String[] args) throws InterruptedException, IOException {
 		
-		
-
 		//deal with command line arguments if provided
 		if (args.length==1) {
 			noPatrons=Integer.parseInt(args[0]);  //total people to enter room
@@ -49,6 +46,7 @@ public class SchedulingSimulation {
   
 	    //create all the patrons, who all need access to Andre
 		patrons = new Patron[noPatrons];
+		simulationStartTime = System.currentTimeMillis(); // Start timing for throughput
 		for (int i=0;i<noPatrons;i++) {
 			patrons[i] = new Patron(i,startSignal,Andre);
 			patrons[i].start();
@@ -67,6 +65,11 @@ public class SchedulingSimulation {
     	System.out.println("------Waiting for Andre------");
     	Andre.interrupt();   //tell Andre to close up
     	Andre.join(); //wait till he has
+		simulationEndTime = System.currentTimeMillis(); // End timing for throughput
+        long totalSimulationTime = simulationEndTime - simulationStartTime;
+        double throughput = (double) noPatrons / (totalSimulationTime / 1000.0); // Calculate throughput in patrons per second
+        String roundedThroughput = String.format("%.2f", throughput); // Round to two decimal places
+        writer.append("Throughput: " + roundedThroughput + " patrons/second\n");
       	writer.close(); //all done, can close file
       	System.out.println("------Bar closed------");
 	}

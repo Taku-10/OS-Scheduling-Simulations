@@ -1,12 +1,11 @@
 package barScheduling;
-
-import java.util.Hashtable;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-
+/**
+ * Represents a drink order in a bar.
+ * @author M. M. Kuttel (mkuttel@gmail.com)
+ */
 public class DrinkOrder  {
 
     //DO NOT change the code below
@@ -51,6 +50,8 @@ public class DrinkOrder  {
     private static final Random random = new Random();
     private int orderer;
     private AtomicBoolean orderComplete;
+    private long queueEntryTime; // Time when the order was queued
+    private long startProcessingTime; // Time when order processing starts
 
  //constructor
     public DrinkOrder(int patron) {
@@ -81,6 +82,38 @@ public class DrinkOrder  {
     	while(!orderComplete.get()) {
     		this.wait();
     	}
+    }
+
+/**
+ * Sets the time when the order was queued.
+ * @param queueEntryTime the time when the order was queued
+ */
+    public void setQueueEntryTime(long queueEntryTime) {
+        this.queueEntryTime = queueEntryTime;
+    }
+
+/**
+ * Gets the time when the order was queued.
+ * @return the time when the order was queued
+ */
+    public long getQueueEntryTime() {
+        return queueEntryTime;
+    }
+
+/**
+ * Sets the time when the order processing starts.
+ * @param startProcessingTime the time when the order processing starts
+ */
+    public void setStartProcessingTime(long startProcessingTime) {
+        this.startProcessingTime = startProcessingTime;
+    }
+
+/**
+ * Gets the time when the order processing starts.
+ * @return the time when the order processing starts
+ */
+    public long getStartProcessingTime() {
+        return startProcessingTime;
     }
     
     @Override
